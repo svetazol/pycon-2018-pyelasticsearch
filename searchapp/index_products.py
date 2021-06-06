@@ -1,4 +1,5 @@
 from elasticsearch import Elasticsearch
+from elasticsearch.helpers import bulk
 
 from searchapp.constants import DOC_TYPE, INDEX_NAME
 from searchapp.data import all_products, ProductData
@@ -16,8 +17,7 @@ def main():
             'settings': {},
         },
     )
-
-    index_product(es, all_products()[0])
+    products_to_index(es, all_products())
 
 
 def index_product(es, product: ProductData):
@@ -26,16 +26,43 @@ def index_product(es, product: ProductData):
     es.create(
         index=INDEX_NAME,
         doc_type=DOC_TYPE,
-        id=1,
+        id=product.id,
         body={
-            "name": "A Great Product",
-            "image": "http://placekitten.com/200/200",
+            "name": product.name,
+            "description": product.description,
+            "image": product.image,
+            "taxonomy": product.taxonomy,
+            "price": product.price,
         }
     )
 
     # Don't delete this! You'll need it to see if your indexing job is working,
     # or if it has stalled.
-    print("Indexed {}".format("A Great Product"))
+    print("Indexed {}".format(product.name))
+
+
+def products_to_index(es, products: list[ProductData]):
+    """Add list of products to the ProductData index."""
+    bulk(es, _bulk_create_iter(products))
+
+    # Don't delete this! You'll need it to see if your indexing job is working,
+    # or if it has stalled.
+    print("Bulk finished")
+
+
+def _bulk_create_iter(products: list[ProductData]):
+    for product in products:
+        yield {
+            "_op_type": "create",
+            "_index": INDEX_NAME,
+            "_type": DOC_TYPE,
+            "_id": product.id,
+            "name": product.name,
+            "description": product.description,
+            "image": product.image,
+            "taxonomy": product.taxonomy,
+            "price": product.price,
+        }
 
 
 if __name__ == '__main__':
