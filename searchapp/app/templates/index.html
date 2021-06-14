@@ -58,9 +58,13 @@
 
     .product-info {
       height: 54px;
-      {#overflow: hidden;#}
+      overflow: hidden;
     }
 
+    .product-description {
+      height: 100px;
+      overflow: hidden;
+    }
     .product-name {
       font-size: 10px;
       margin-right: 10px;
@@ -85,6 +89,9 @@
               <img class="product-image" src="{{ product.image }}"/>
               <div class="product-info">
                 <span>{{ product.name }}</span>
+              </div>
+              <div class="product-description">
+                <span>{{ product.description }}</span>
               </div>
             </a>
           {% endfor %}

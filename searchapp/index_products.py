@@ -26,6 +26,18 @@ def main():
                                     # And here’s the analyzer we want to use.
                                 }
                             }
+                        },
+                        # Just a magic word.
+                        'description': {  # The field we want to configure.
+                            'type': 'text',  # The kind of data we’re working with.
+                            'fields': {  # create an analyzed field.
+                                'english_analyzed': {
+                                    # Name that field `name.english_analyzed`.
+                                    'type': 'text',  # It’s also text.
+                                    'analyzer': 'english',
+                                    # And here’s the analyzer we want to use.
+                                }
+                            }
                         }
                     }
                 }
